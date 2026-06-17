@@ -1,1 +1,68 @@
-<p>auth works!</p>
+<div class="auth-container">
+    <h2>Roʻyxatdan oʻtish</h2>
+
+    <div class="role-selector">
+        <button [class.active]="selectedRole === userRoles.PLAYER"
+            (click)="authForm.get('role')?.setValue(userRoles.PLAYER)">
+            🎮 Kibersportchiman
+        </button>
+        <button [class.active]="selectedRole === userRoles.TEAM"
+            (click)="authForm.get('role')?.setValue(userRoles.TEAM)">
+            🏢 Jamoaman
+        </button>
+    </div>
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" formControlName="email" placeholder="example@mail.com">
+        </div>
+
+        <div class="form-group">
+            <label>Parol</label>
+            <input type="password" formControlName="password" placeholder="Kamida 6 ta belgi">
+        </div>
+
+        <hr>
+
+        @if (selectedRole === userRoles.PLAYER) {
+        <div>
+            <div class="form-group">
+                <label>Nickname</label>
+                <input type="text" formControlName="nickname" placeholder="Masalan: Shox_Player">
+            </div>
+
+            <div class="form-group">
+                <label>Asosiy O'yin</label>
+                <select formControlName="mainGame">
+                    @for (game of esportGames; track game) {
+                    <option [value]="game">{{ game }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Rank (Daraja)</label>
+                <input type="text" formControlName="rank" placeholder="Masalan: Faceit 10, Radiant">
+            </div>
+        </div>
+        }
+
+        @if (selectedRole === userRoles.TEAM) {
+        <div>
+            <div class="form-group">
+                <label>Jamoa Nomi</label>
+                <input type="text" formControlName="teamName" placeholder="Masalan: Navbahor Gaming">
+            </div>
+
+            <div class="form-group">
+                <label>Tashkil topgan yili</label>
+                <input type="number" formControlName="createdYear" placeholder="2024">
+            </div>
+        </div>
+        }
+
+        <button type="submit" class="submit-btn">Yaratish</button>
+    </form>
+</div>
