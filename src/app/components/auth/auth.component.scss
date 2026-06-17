@@ -1,0 +1,140 @@
+// Ranglar va o'zgaruvchilar (Cyberpunk / Esports uslubida)
+$bg-dark: #0f111a;
+$card-bg: #161925;
+$primary-neon: #00ffcc; // Neon firuza (Neon Teal)
+$secondary-neon: #ff0055; // Neon qizil (Cyber Pink)
+$text-white: #ffffff;
+$text-gray: #8a8f98;
+$input-bg: #1f2335;
+
+.auth-container {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: $card-bg;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba($primary-neon, 0.1);
+    border: 1px solid rgba($primary-neon, 0.2);
+    color: $text-white;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 28px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: $text-white;
+        text-shadow: 0 0 10px rgba($primary-neon, 0.5);
+    }
+
+    // Rol tanlash tugmalari (Tabs)
+    .role-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #2d3142;
+            background-color: transparent;
+            color: $text-gray;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+
+            &:hover {
+                color: $text-white;
+                border-color: rgba($primary-neon, 0.5);
+            }
+
+            &.active {
+                color: $bg-dark;
+                background-color: $primary-neon;
+                border-color: $primary-neon;
+                box-shadow: 0 0 15px rgba($primary-neon, 0.4);
+            }
+        }
+    }
+
+    // Form guruhlari
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        label {
+            font-size: 14px;
+            color: $text-gray;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            background-color: $input-bg;
+            border: 1px solid #2d3142;
+            border-radius: 6px;
+            color: $text-white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-neon;
+                box-shadow: 0 0 8px rgba($primary-neon, 0.3);
+            }
+
+            &::placeholder {
+                color: #4c526d;
+            }
+        }
+
+        // Select input o'ziga xosligi
+        select {
+            cursor: pointer;
+            appearance: none; // Brauzerning standart strelkasini yo'qotish
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+    }
+
+    hr {
+        border: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba($primary-neon, 0.5), transparent);
+        margin: 25px 0;
+    }
+
+    // Yuborish tugmasi
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, $primary-neon, #00b3ff);
+        border: none;
+        border-radius: 6px;
+        color: $bg-dark;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba($primary-neon, 0.4);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
