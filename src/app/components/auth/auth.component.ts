@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EsportGame, UserRole } from '../../models/cyber.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -17,7 +18,7 @@ export class AuthComponent implements OnInit {
   selectedRole: UserRole = UserRole.PLAYER;
   authForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -61,7 +62,8 @@ export class AuthComponent implements OnInit {
 
   onSubmit() {
     if (this.authForm.valid) {
-      console.log("Yuborilgan ma'lumotlar:", this.authForm.value);
+      this.authService.register(this.authForm.value);
+      alert("Muvaffaqiyatli ro'yxatdan o'tdingiz! (Ma'lumotlar localStorage-ga saqlandi)");
     } else {
       alert("Iltimos, barcha maydonlarni to'g'ri to'ldiring!");
     }
