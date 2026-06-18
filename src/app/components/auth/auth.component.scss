@@ -112,6 +112,31 @@ $input-bg: #1f2335;
         margin: 25px 0;
     }
 
+    // Auth footer
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba($primary-neon, 0.2);
+
+        p {
+            color: $text-gray;
+            font-size: 14px;
+
+            a {
+                color: $primary-neon;
+                text-decoration: none;
+                font-weight: bold;
+                transition: all 0.3s;
+
+                &:hover {
+                    color: $secondary-neon;
+                    text-shadow: 0 0 10px rgba($secondary-neon, 0.5);
+                }
+            }
+        }
+    }
+
     // Yuborish tugmasi
     .submit-btn {
         width: 100%;

@@ -58,6 +58,7 @@ export interface TeamOffer {
     teamId: string;
     teamName: string; // Tezroq o'qish uchun xabarnomada ko'rsatishga
     playerId: string;
+    playerName?: string; // O'yinchi nomi (tezroq o'qish uchun)
     message: string; // "Biz sizni jamoamizga taklif qilamiz..."
     salaryOffer?: number; // ixtiyoriy: taklif qilinayotgan oylik
     status: OfferStatus;

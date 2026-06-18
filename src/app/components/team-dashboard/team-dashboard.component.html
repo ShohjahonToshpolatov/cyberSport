@@ -1,1 +1,257 @@
-<p>team-dashboard works!</p>
+<div class="team-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>🏢 CyberSport Jamoa Paneli</h1>
+      <span class="api-status" [class.connected]="getApiUrl()">
+        API: {{ getApiUrl() }}
+      </span>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-notification" (click)="toggleNotifications()">
+        🔔 Takliflar
+        @if (receivedOffers.length > 0) {
+          <span class="badge">{{ receivedOffers.length }}</span>
+        }
+      </button>
+      <button class="btn btn-logout" (click)="logout()">Chiqish</button>
+    </div>
+  </header>
+
+  <!-- Notifications Dropdown -->
+  @if (showNotifications) {
+    <div class="notifications-dropdown">
+      <h3>Kelgan takliflar</h3>
+      @if (receivedOffers.length === 0) {
+        <p class="no-notifications">Hozircha takliflar yo'q</p>
+      } @else {
+        @for (offer of receivedOffers; track offer.id) {
+          <div class="notification-item">
+            <div class="notification-header">
+              <strong>{{ offer.playerName || 'O\'yinchi' }}</strong>
+              <span class="status-badge" [class]="getStatusClass(offer.status)">
+                {{ getStatusText(offer.status) }}
+              </span>
+            </div>
+            <p>{{ offer.message }}</p>
+            @if (offer.status === 'pending') {
+              <div class="notification-actions">
+                <button class="btn btn-accept" (click)="respondToOffer(offer.id, 'accepted')">
+                  Qabul qilish
+                </button>
+                <button class="btn btn-reject" (click)="respondToOffer(offer.id, 'rejected')">
+                  Rad etish
+                </button>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <div class="dashboard-content">
+    <!-- Left Sidebar - Team Profile -->
+    <aside class="profile-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar">
+          @if (teamUser?.logoUrl) {
+            <img [src]="teamUser.logoUrl" [alt]="teamUser.teamName">
+          } @else {
+            <div class="avatar-placeholder">
+              {{ teamUser?.teamName?.charAt(0).toUpperCase() || '?' }}
+            </div>
+          }
+        </div>
+
+        @if (!isEditingProfile) {
+          <div class="profile-info">
+            <h2>{{ teamUser?.teamName || 'Nomalum' }}</h2>
+            <p class="user-role">🏢 Jamoa</p>
+            <div class="info-list">
+              <p><strong>Tashkil topgan:</strong> {{ teamUser?.createdYear }} yil</p>
+              <p><strong>A'zolar soni:</strong> {{ teamUser?.membersCount || 0 }}</p>
+              <p><strong>Yutuqlar:</strong> {{ teamUser?.achievements?.length || 0 }} ta</p>
+              <p class="team-description">{{ teamUser?.description || 'Tavsif mavjud emas' }}</p>
+            </div>
+            <div class="team-games">
+              @for (game of (teamUser?.lookingForGames || []); track game) {
+                <span class="game-tag">{{ game }}</span>
+              }
+            </div>
+            @if (teamUser?.website) {
+              <a [href]="teamUser.website" target="_blank" class="website-link">
+                🌐 Veb-sayt
+              </a>
+            }
+            <button class="btn btn-edit" (click)="toggleProfileEdit()">✏️ Tahrirlash</button>
+          </div>
+        } @else {
+          <div class="profile-edit-form">
+            <h3>Jamoa profilini tahrirlash</h3>
+            <div class="form-group">
+              <label>Jamoa nomi</label>
+              <input type="text" [(ngModel)]="profileForm.teamName">
+            </div>
+            <div class="form-group">
+              <label>Tashkil topgan yili</label>
+              <input type="number" [(ngModel)]="profileForm.createdYear">
+            </div>
+            <div class="form-group">
+              <label>A'zolar soni</label>
+              <input type="number" [(ngModel)]="profileForm.membersCount">
+            </div>
+            <div class="form-group">
+              <label>Tavsif</label>
+              <textarea [(ngModel)]="profileForm.description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Veb-sayt</label>
+              <input type="text" [(ngModel)]="profileForm.website">
+            </div>
+            <div class="form-group">
+              <label>Yutuqlar (vergul bilan ajrating)</label>
+              <textarea [(ngModel)]="profileForm.achievements" rows="2" placeholder="Najot Cup Winner, ESL Champion"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Qidirayotgan o'yinlar</label>
+              <div class="games-checkbox-group">
+                @for (game of esportGames; track game) {
+                  <label class="game-checkbox">
+                    <input type="checkbox" 
+                           [checked]="isGameSelected(game)" 
+                           (change)="toggleGameSelection(game)">
+                    {{ game }}
+                  </label>
+                }
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-save" (click)="saveProfile()">💾 Saqlash</button>
+              <button class="btn btn-cancel" (click)="toggleProfileEdit()">Bekor qilish</button>
+            </div>
+          </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Search Players Section -->
+      <section class="players-search-section">
+        <h2>🔍 O'yinchilarni qidirish</h2>
+        <div class="search-controls">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            (keyup.enter)="onSearch()"
+            placeholder="O'yinchi nomi bo'yicha qidirish..."
+            class="search-input">
+          <select [(ngModel)]="selectedGameFilter" (change)="onGameFilterChange()" class="game-filter">
+            <option [value]="''">Barcha o'yinlar</option>
+            @for (game of esportGames; track game) {
+              <option [value]="game">{{ game }}</option>
+            }
+          </select>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedRankFilter" 
+            (keyup.enter)="onRankFilterChange()"
+            placeholder="Rank (masalan: Faceit 10)"
+            class="rank-filter">
+          <button class="btn btn-search" (click)="onSearch()">Qidirish</button>
+        </div>
+
+        @if (isLoadingPlayers) {
+          <div class="loading">Yuklanmoqda...</div>
+        } @else if (players.length === 0) {
+          <div class="no-data">O'yinchilar topilmadi</div>
+        } @else {
+          <div class="players-grid">
+            @for (player of players; track player.id) {
+              <div class="player-card">
+                <div class="player-header">
+                  <div class="player-avatar-small">
+                    <div class="avatar-placeholder-small">
+                      {{ player.nickname?.charAt(0).toUpperCase() || '?' }}
+                    </div>
+                  </div>
+                  <div class="player-info">
+                    <h3>{{ player.nickname }}</h3>
+                    <p class="player-game">{{ player.mainGame }}</p>
+                    <p class="player-rank">{{ player.rank || 'Nomalum' }}</p>
+                  </div>
+                </div>
+                <div class="player-body">
+                  <p><strong>Tajriba:</strong> {{ player.experienceYears || 0 }} yil</p>
+                  <p class="player-bio">{{ player.bio || 'Bio mavjud emas' }}</p>
+                  @if (player.socialLinks?.steam || player.socialLinks?.discord) {
+                    <div class="player-social">
+                      @if (player.socialLinks?.steam) {
+                      <a [href]="player.socialLinks?.steam" target="_blank" class="social-icon" title="Steam">
+                          🎮
+                        </a>
+                      }
+                      @if (player.socialLinks?.discord) {
+                        <a [href]="'https://discord.com/users/' + player.socialLinks.discord" target="_blank" class="social-icon" title="Discord">
+                          💬
+                        </a>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="player-footer">
+                  <button class="btn btn-offer" (click)="sendOfferToPlayer(player)">
+                    📩 Taklif yuborish
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Received Offers Section -->
+      <section class="received-offers-section">
+        <h2>📨 Kelgan takliflar</h2>
+        @if (isLoadingOffers) {
+          <div class="loading">Yuklanmoqda...</div>
+        } @else if (receivedOffers.length === 0) {
+          <div class="no-data">Siz hali hech qanday taklif olmadingiz</div>
+        } @else {
+          <div class="offers-list">
+            @for (offer of receivedOffers; track offer.id) {
+              <div class="offer-card">
+                <div class="offer-header">
+                  <h4>{{ offer.playerName || 'O\'yinchi' }}</h4>
+                  <span class="status-badge" [class]="getStatusClass(offer.status)">
+                    {{ getStatusText(offer.status) }}
+                  </span>
+                </div>
+                <p class="offer-message">{{ offer.message }}</p>
+                @if (offer.salaryOffer && offer.salaryOffer > 0) {
+                  <p class="offer-salary">
+                    <strong>Taklif qilinayotgan maosh:</strong> ${{ offer.salaryOffer }}/oy
+                  </p>
+                }
+                <p class="offer-date">
+                  {{ offer.createdAt | date:'dd.MM.yyyy HH:mm' }}
+                </p>
+                @if (offer.status === 'pending') {
+                  <div class="offer-actions">
+                    <button class="btn btn-accept" (click)="respondToOffer(offer.id, 'accepted')">
+                      ✅ Qabul qilish
+                    </button>
+                    <button class="btn btn-reject" (click)="respondToOffer(offer.id, 'rejected')">
+                      ❌ Rad etish
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </main>
+  </div>
+</div>
