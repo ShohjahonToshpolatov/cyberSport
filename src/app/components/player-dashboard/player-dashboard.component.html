@@ -56,10 +56,10 @@
       <div class="profile-card">
         <div class="profile-avatar">
           @if (playerUser?.avatarUrl) {
-            <img [src]="playerUser.avatarUrl" [alt]="playerUser.nickname">
+            <img [src]="playerUser.avatarUrl" [alt]="playerUser?.nickname || 'Player'">
           } @else {
             <div class="avatar-placeholder">
-              {{ playerUser?.nickname?.charAt(0).toUpperCase() || '?' }}
+              {{ (playerUser?.nickname || '?').charAt(0).toUpperCase() }}
             </div>
           }
         </div>
@@ -76,7 +76,7 @@
             </div>
             <div class="social-links">
               @if (playerUser?.socialLinks?.steam) {
-              <a [href]="playerUser.socialLinks?.steam" target="_blank" class="social-link steam">
+                <a [href]="playerUser.socialLinks.steam" target="_blank" class="social-link steam">
                   🎮 Steam
                 </a>
               }

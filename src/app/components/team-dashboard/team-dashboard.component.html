@@ -56,10 +56,10 @@
       <div class="profile-card">
         <div class="profile-avatar">
           @if (teamUser?.logoUrl) {
-            <img [src]="teamUser.logoUrl" [alt]="teamUser.teamName">
+            <img [src]="teamUser.logoUrl" [alt]="teamUser?.teamName || 'Team'">
           } @else {
             <div class="avatar-placeholder">
-              {{ teamUser?.teamName?.charAt(0).toUpperCase() || '?' }}
+              {{ (teamUser?.teamName || '?').charAt(0).toUpperCase() }}
             </div>
           }
         </div>
@@ -188,7 +188,7 @@
                   @if (player.socialLinks?.steam || player.socialLinks?.discord) {
                     <div class="player-social">
                       @if (player.socialLinks?.steam) {
-                      <a [href]="player.socialLinks?.steam" target="_blank" class="social-icon" title="Steam">
+                        <a [href]="player.socialLinks.steam" target="_blank" class="social-icon" title="Steam">
                           🎮
                         </a>
                       }
