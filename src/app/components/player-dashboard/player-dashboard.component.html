@@ -59,7 +59,7 @@
             <img [src]="playerUser.avatarUrl" [alt]="playerUser?.nickname || 'Player'">
           } @else {
             <div class="avatar-placeholder">
-              {{ (playerUser?.nickname || '?').charAt(0).toUpperCase() }}
+              {{ (playerUser?.nickname ?? '?').charAt(0).toUpperCase() }}
             </div>
           }
         </div>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="team-body">
                   <p><strong>A'zolar soni:</strong> {{ team.membersCount }}</p>
-                  <p><strong>Yutuqlar:</strong> {{ team.achievements?.length || 0 }} ta</p>
+                  <p><strong>Yutuqlar:</strong> {{ team.achievements.length || 0 }} ta</p>
                   <p class="team-description">{{ team.description || 'Tavsif mavjud emas' }}</p>
                   <div class="team-games">
                     @for (game of team.lookingForGames; track game) {
